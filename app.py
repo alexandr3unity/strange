@@ -1,86 +1,72 @@
-от колба импортировать Flask, render_template, session, redirect, url_for, request
-импортировать запросы
+from flask import Flask, render_template, session, redirect, url_for, request
+import requests
 
-app = колба(__name__)
-app.секретный_ключ = '933-549-750'  # Этот ключ нужен для работы с сессиями
-app.внешний вид['SESSION_TYPE'] = 'filesystem'  # Правильная конфигурация сессий
+app = Flask(__name__, template_folder='.')  # Указываем текущую папку как папку для шаблонов
+app.secret_key = '933-549-750'  # Этот ключ нужен для работы с сессиями
+app.config['SESSION_TYPE'] = 'filesystem'  # Правильная конфигурация сессий
 
 # Главная страница
 @app.route('/')
-защита дом():
-    возвращаться render_template('index.html')
+def home():
+    return render_template('index.html')  # index.html в корневом каталоге
 
 # Добавление товара в корзину
 @app.route('/add_to_cart/<int:id>/<string:name>/<float:price>', methods=['POST'])
-защита добавить в корзину(id, name, price):
-    # Если корзина не существует в сессии, создаем её
-    если 'cart' нет в сессия:
+def add_to_cart(id, name, price):
+    if 'cart' not in session:
         session['cart'] = []
     
-    # Проверяем, есть ли уже товар в корзине
     product = {
         'id': id,
         'name': name,
         'price': price,
-        'quantity': 1  # Добавляем один товар
+        'quantity': 1
     }
     
-    # Если товар уже есть в корзине, увеличиваем его количество
-    для элемент в сессия['cart']:
-        если элемент['id'] == id:
+    for item in session['cart']:
+        if item['id'] == id:
             item['quantity'] += 1
-            перерыв
-    еще:
-        # Если товара нет в корзине, добавляем новый
-        session['cart'].добавить(product)
+            break
+    else:
+        session['cart'].append(product)
     
-    # Обновляем сессию
-    session.модифицированный = Истинный
-    
-    # Перенаправляем на страницу корзины
-    возвращаться перенаправить(url_for('cart'))
+    session.modified = True
+    return redirect(url_for('cart'))
 
-@app.route('/liquids')
+@app.route('https://alexandr3unity.github.io/strange/liquids')
 def liquids():
-    return render_template('https://alexandr3unity.github.io/strange/liquids.html')  # liquids.html в корневом каталоге
+    return render_template('liquids.html')  # liquids.html в корневом каталоге
 
 @app.route('/devices')
 def devices():
-    return render_template('/devices.html')
+    return render_template('devices.html')  # devices.html в корневом каталоге
 
 @app.route('/nicotine_liquids')
 def nicotine_liquids():
-    return render_template('nicotine_liquids.html')
+    return render_template('nicotine_liquids.html')  # nicotine_liquids.html в корневом каталоге
 
 @app.route('/non_nicotine_liquids')
 def non_nicotine_liquids():
-    return render_template('non_nicotine_liquids.html')
+    return render_template('non_nicotine_liquids.html')  # non_nicotine_liquids.html в корневом каталоге
 
 @app.route('/premium_liquids')
 def premium_liquids():
-    return render_template('premium_liquids.html')
+    return render_template('premium_liquids.html')  # premium_liquids.html в корневом каталоге
 
 @app.route('/flavored_liquids')
 def flavored_liquids():
-    return render_template('flavored_liquids.html')
+    return render_template('flavored_liquids.html')  # flavored_liquids.html в корневом каталоге
 
 @app.route('/organic_liquids')
 def organic_liquids():
-    return render_template('organic_liquids.html')
-
-
+    return render_template('organic_liquids.html')  # organic_liquids.html в корневом каталоге
 
 @app.route('/cart')
 def cart():
-    # Получаем корзину из сессии
     cart = session.get('cart', [])
-    
-    # Рассчитываем общую сумму
     total_sum = sum(item['price'] * item['quantity'] for item in cart)
+    return render_template('cart.html', cart=cart, total_sum=total_sum)  # cart.html в корневом каталоге
 
-    return render_template('cart.html', cart=cart, total_sum=total_sum)
-
-# Обновление количества товара в корзине
 @app.route('/update_quantity/<int:item_id>/<action>', methods=['POST'])
 def update_quantity(item_id, action):
     cart = session.get('cart', [])
@@ -94,42 +80,34 @@ def update_quantity(item_id, action):
     session.modified = True
     return redirect(url_for('cart'))
 
-# Удаление товара из корзины
 @app.route('/remove_from_cart/<int:item_id>', methods=['POST'])
 def remove_from_cart(item_id):
     session['cart'] = [item for item in session['cart'] if item['id'] != item_id]
     session.modified = True
     return redirect(url_for('cart'))
 
-# Очистка корзины
 @app.route('/clear_cart', methods=['POST'])
 def clear_cart():
-    session['cart'] = []  # Очищаем корзину в сессии
+    session['cart'] = []
     session.modified = True
     return redirect(url_for('cart'))
 
-# Страница для оформления оплаты
 @app.route('/checkout')
 def checkout():
-    # Если корзина пуста, перенаправляем на главную
     if 'cart' not in session or len(session['cart']) == 0:
         return redirect(url_for('home'))
 
-    # Рассчитываем общую сумму
     total_sum = sum(item['price'] * item['quantity'] for item in session['cart'])
-    return render_template('checkout.html', total_sum=total_sum)
+    return render_template('checkout.html', total_sum=total_sum)  # checkout.html в корневом каталоге
 
-# Страница для завершения оплаты (симуляция)
 @app.route('/process_payment', methods=['POST'])
 def process_payment():
-    # Проверяем, есть ли товары в корзине
     if 'cart' not in session or len(session['cart']) == 0:
         return redirect(url_for('home'))
 
     cart = session['cart']
     total_sum = sum(item['price'] * item['quantity'] for item in cart)
 
-    # Сформируйте сообщение для Telegram
     message = "Новая покупка!\n"
     message += "Товары:\n"
     for item in cart:
@@ -162,10 +140,12 @@ def payment_success():
                            payment_date=payment_date,
                            order_id=order_id,
                            cart=cart,
-                           total_amount=total_amount)
+                           total_amount=total_amount)  # payment_success.html в корневом каталоге
 
-TELEGRAM_BOT_TOKEN = '7791735203:AAFC1TzcCpkgjrvFASLyG5Vhw6X-gVEoHLg'  # замените на ваш токен
-TELEGRAM_CHAT_ID = '771803609'      # замените на ваш chat_id (можно найти с помощью @userinfobot)
+# Telegram Bot Token и Chat ID
+# Telegram Bot Token и Chat ID
+TELEGRAM_BOT_TOKEN = '7791735203:AAFC1TzcCpkgjrvFASLyG5Vhw6X-gVEoHLg'  # Замените на ваш токен
+TELEGRAM_CHAT_ID = '771803609'  # Замените на ваш chat_id (можно найти с помощью @userinfobot)
 
 def send_telegram_message(message):
     url = f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage'
@@ -178,3 +158,6 @@ def send_telegram_message(message):
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+
