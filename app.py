@@ -42,7 +42,7 @@ def add_to_cart(id, name, price):
 
 @app.route('/liquids')
 def liquids():
-    return render_template('liquids.html')
+    return render_template('EQCLfvbkTrdUJ1wfyNI9uOdcK30z1wbWWX060mrXBNwp2Tse')
 
 @app.route('/devices')
 def devices():
