@@ -37,9 +37,9 @@ def add_to_cart(id, name, price):
 def liquids():
     return render_template('liquids.html')  # liquids.html в корневом каталоге
 
-@app.route('https://github.com/alexandr3unity/strange/blob/main/devices.html')
+@app.route('/devices')
 def devices():
-    return render_template('devices.html')  # devices.html в корневом каталоге
+    return render_template('https://github.com/alexandr3unity/strange/blob/main/devices.html')  # devices.html в корневом каталоге
 
 @app.route('/nicotine_liquids')
 def nicotine_liquids():
