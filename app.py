@@ -40,9 +40,9 @@ def add_to_cart(id, name, price):
     # Перенаправляем на страницу корзины
     return redirect(url_for('cart'))
 
-@app.route('https://alexandr3unity.github.io/strange/liquids')
+@app.route('/liquids')
 def liquids():
-    return render_template('liquids.html')  # liquids.html в корневом каталоге
+    return render_template('https://alexandr3unity.github.io/strange/liquids.html')  # liquids.html в корневом каталоге
 
 @app.route('/devices')
 def devices():
