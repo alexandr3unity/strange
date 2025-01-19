@@ -33,7 +33,7 @@ def add_to_cart(id, name, price):
     session.modified = True
     return redirect(url_for('cart'))
 
-@app.route('https://alexandr3unity.github.io/strange/liquids')
+@app.route('/liquids')
 def liquids():
     return render_template('liquids.html')  # liquids.html в корневом каталоге
 
