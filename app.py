@@ -33,7 +33,7 @@ def add_to_cart(id, name, price):
     session.modified = True
     return redirect(url_for('cart'))
 
-@app.route('/liquids')
+@app.route('%7B%7B%20url_for('liquids')%20%7D%7D')
 def liquids():
     return render_template('liquids.html')  # liquids.html в корневом каталоге
 
