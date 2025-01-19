@@ -1,20 +1,20 @@
-from flask import Flask, render_template, session, redirect, url_for, request
-import requests
+от колба импортировать Flask, render_template, session, redirect, url_for, request
+импортировать запросы
 
-app = Flask(__name__)
-app.secret_key = '933-549-750'  # Этот ключ нужен для работы с сессиями
-app.config['SESSION_TYPE'] = 'filesystem'  # Правильная конфигурация сессий
+app = колба(__name__)
+app.секретный_ключ = '933-549-750'  # Этот ключ нужен для работы с сессиями
+app.внешний вид['SESSION_TYPE'] = 'filesystem'  # Правильная конфигурация сессий
 
 # Главная страница
 @app.route('/')
-def home():
-    return render_template('index.html')
+защита дом():
+    возвращаться render_template('index.html')
 
 # Добавление товара в корзину
 @app.route('/add_to_cart/<int:id>/<string:name>/<float:price>', methods=['POST'])
-def add_to_cart(id, name, price):
+защита добавить в корзину(id, name, price):
     # Если корзина не существует в сессии, создаем её
-    if 'cart' not in session:
+    если 'cart' нет в сессия:
         session['cart'] = []
     
     # Проверяем, есть ли уже товар в корзине
@@ -26,19 +26,19 @@ def add_to_cart(id, name, price):
     }
     
     # Если товар уже есть в корзине, увеличиваем его количество
-    for item in session['cart']:
-        if item['id'] == id:
+    для элемент в сессия['cart']:
+        если элемент['id'] == id:
             item['quantity'] += 1
-            break
-    else:
+            перерыв
+    еще:
         # Если товара нет в корзине, добавляем новый
-        session['cart'].append(product)
+        session['cart'].добавить(product)
     
     # Обновляем сессию
-    session.modified = True
+    session.модифицированный = Истинный
     
     # Перенаправляем на страницу корзины
-    return redirect(url_for('cart'))
+    возвращаться перенаправить(url_for('cart'))
 
 @app.route('/liquids')
 def liquids():
@@ -46,7 +46,7 @@ def liquids():
 
 @app.route('/devices')
 def devices():
-    return render_template('devices.html')
+    return render_template('/devices.html')
 
 @app.route('/nicotine_liquids')
 def nicotine_liquids():
