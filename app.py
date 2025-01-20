@@ -157,7 +157,6 @@ def send_telegram_message(message):
     return response.json()
 
 if __name__ == "__main__":
-    app.run(debug=True)
-
+  
 
 
